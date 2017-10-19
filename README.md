@@ -63,6 +63,8 @@ the path has processed since last time.
 3.  Given the car's localization, the previous path data, and a full list of sensor fusion data of all other car's attributes on the same side of the road, we can calculate distance between our vehicle with the vehicle in the front to determine if it is too close, so that we need to adjust our vehicle speed to slow down or if the condition of the right or left lane open without any other vehicles, our car may decide to change lane accordingly. And, if the vehicle is already in the left most lane, we don't want our vehicle to change left lane again.  The same condition is also applied to the right most lane.
 Based on provided previous path data, we can setup the way points, generate the path points. and move the points to car coordination. In this project, we mainly rely on Spline to create a smooth trajectories for those path points.
 
+You can view the video captured the Vehicle Path Planning in the simulation at : https://youtu.be/yzlN2rts0Ew
+
 ## Tips
 
 A really helpful resource for doing this project and creating smooth trajectories was using http://kluge.in-chemnitz.de/opensource/spline/, the spline function is in a single hearder file is really easy to use.
