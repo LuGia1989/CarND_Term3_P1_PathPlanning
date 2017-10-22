@@ -10,15 +10,15 @@
 #include "json.hpp"
 #include "spline.h"
 
-#define PROJECT_STEP 50  // how far to project into the future
+#define PROJECT_STEP 30  // how far to project into the future
 
-#define SAFETY_ZONE 20   // how close is too close
+#define SAFETY_ZONE 30   // how close is too close
 
 #define SPEED_LIMIT 49.5 // Speed limit in MPH, multiply by 2.24 to convert to m/s
 #define DT 0.02          // 20 ms in s
 #define LARGE_NUM 10000
 
-#define ADJUST_VELOCITY 0.200
+#define ADJUST_VELOCITY 0.224
 
 using namespace std;
 using json = nlohmann::json; // for convenience
@@ -322,6 +322,8 @@ int main() {
               double sf_vx = sensor_fusion[i][3];
               double sf_vy = sensor_fusion[i][4];
               double sf_s = sensor_fusion[i][5];
+
+              //
               double check_speed = CheckSpeed(sf_vx, sf_vy);
               double project_s = sf_s + ((double)previous_path_size * check_speed);
               double gap = Gap(sf_vx, sf_vy, previous_path_size, sf_s, end_path_s);
@@ -350,6 +352,14 @@ int main() {
                 if (d_lane == (lane-1)) {change_left_lane = false;}
                 if (d_lane == (lane+1)) {change_right_lane = false;}
               }
+
+              if (left_lane_open <= gap) {
+            	  change_left_lane = false;
+              } else if (right_lane_open <= gap) {
+            	  change_right_lane =  false;
+              }
+
+
             }
 
             if (watchout_ahead) {
@@ -369,7 +379,7 @@ int main() {
             double ref_x = car_x;
             double ref_y = car_y;
 
-            if (previous_path_size >= 2) { // use two previous path points
+            if (previous_path_size >= 3) { // use two previous path points
               ptsx.push_back(previous_path_x[previous_path_size-2]);
               ptsy.push_back(previous_path_y[previous_path_size-2]);
 

@@ -54,7 +54,7 @@ the path has processed since last time.
 
 ["sensor_fusion"] A 2d vector of cars and then that car's [car's unique ID, car's x position in map coordinates, car's y position in map coordinates, car's x velocity in m/s, car's y velocity in m/s, car's s position in frenet coordinates, car's d position in frenet coordinates. 
 
-## Detailed Reflection on how to generate paths:
+## Details
 
 1. The car uses a perfect controller and will visit every (x,y) point it recieves in the list every .02 seconds. The units for the (x,y) points are in meters and the spacing of the points determines the speed of the car. The vector going from a point to the next point in the list dictates the angle of the car. Acceleration both in the tangential and normal directions is measured along with the jerk, the rate of change of total Acceleration. The (x,y) point paths that the planner recieves should not have a total acceleration that goes over 10 m/s^2, also the jerk should not go over 50 m/s^3. (NOTE: As this is BETA, these requirements might change. Also currently jerk is over a .02 second interval, it would probably be better to average total acceleration over 1 second and measure jerk from that.
 
@@ -62,6 +62,31 @@ the path has processed since last time.
 
 3.  Given the car's localization, the previous path data, and a full list of sensor fusion data of all other car's attributes on the same side of the road, we can calculate distance between our vehicle with the vehicle in the front to determine if it is too close, so that we need to adjust our vehicle speed to slow down or if the condition of the right or left lane open without any other vehicles, our car may decide to change lane accordingly. And, if the vehicle is already in the left most lane, we don't want our vehicle to change left lane again.  The same condition is also applied to the right most lane.
 Based on provided previous path data, we can setup the way points, generate the path points. and move the points to car coordination. In this project, we mainly rely on Spline to create a smooth trajectories for those path points.
+
+
+## Detailed Reflection on how to generate paths
+
+This project path planning implemented through steps to generate a robust and smooth paths.  Below are the series of steps:
+1.  The 1st step is to extractthe car's localization data:  the current x, y coordinate, the frenet coordinate s and d of the car, the yaw and the speed of the ego car.  It also extract the sensor fusion which contain the x, y cartesian coordinate, and the frenet s, d coordinate of the surrounding vehicles.
+2.  It also extract the previous path data from the previous path planning cycle and use them in the current path planning phase.
+3.  After extraction, the planner step through a series of defining a safety zone, check the speed of other vehicles, and project the path.  
+4.  Next, based on the speed of the ego car and other cars, the planner determine whether the ego car is too close to the front car, and attempt to initiate a lane change.  The condition of the availability of the neighbor lanes is implemented based on the state of the current lane like is it already the left most lane, right most lane, the gap between cars.  
+5. Next, way points are generated.  First, start with the last two way points from the previous path planning cycle if available.  If the way points are not available, they are generated base on the vehicle yaw angle.  The way point generation technique based on the incrementation of the safety zone.  At this point, the way points are generated in the global coordinate.  They need to convert to the car coordinate.  The new way points in car coordinate are then passed through the spline function to predict the path point.  
+6.  Finally, the target velocity and the adjustment of the velocity  is calculated and the path points are added to the existing path point list.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 You can view the video captured the Vehicle Path Planning in the simulation at : https://youtu.be/yzlN2rts0Ew
 
